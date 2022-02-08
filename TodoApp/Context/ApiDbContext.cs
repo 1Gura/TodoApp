@@ -5,11 +5,15 @@ namespace TodoApp.Context
 {
     public class ApiDbContext : DbContext
     {
-        public virtual DbSet<Todo>? Todos { get; set; }
+        public virtual DbSet<Todo> Todos { get; set; }
 
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
         {
-
         }
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer(@"Server=(localdb)\\mssqllocaldb;Database=tododbstore;Trusted_Connection=True;");
+        //}
     }
 }
