@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\TodoApp\\TodoApp\\TodoApp.csproj": {}
+    "C:\\TodoApp\\TodoApp\\TodoApp.csproj": {}
   },
   "projects": {
-    "D:\\TodoApp\\TodoApp\\TodoApp.csproj": {
+    "C:\\TodoApp\\TodoApp\\TodoApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\TodoApp\\TodoApp\\TodoApp.csproj",
+        "projectUniqueName": "C:\\TodoApp\\TodoApp\\TodoApp.csproj",
         "projectName": "TodoApp",
-        "projectPath": "D:\\TodoApp\\TodoApp\\TodoApp.csproj",
+        "projectPath": "C:\\TodoApp\\TodoApp\\TodoApp.csproj",
         "packagesPath": "C:\\Users\\gurai\\.nuget\\packages\\",
-        "outputPath": "D:\\TodoApp\\TodoApp\\obj\\",
+        "outputPath": "C:\\TodoApp\\TodoApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -44,20 +44,6 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
-            "Microsoft.EntityFrameworkCore": {
-              "target": "Package",
-              "version": "[6.0.2, )"
-            },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
-              "target": "Package",
-              "version": "[6.0.2, )"
-            },
-            "Microsoft.EntityFrameworkCore.Tools": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[6.0.2, )"
-            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
