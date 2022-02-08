@@ -25,3 +25,13 @@ D:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.dll
 D:\TodoApp\TodoApp\obj\Debug\net6.0\ref\TodoApp.dll
 D:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.pdb
 D:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.genruntimeconfig.cache
+C:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.csproj.AssemblyReference.cache
+C:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.AssemblyInfoInputs.cache
+C:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.AssemblyInfo.cs
+C:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.csproj.CoreCompileInputs.cache
+C:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.MvcApplicationPartsAssemblyInfo.cs
+C:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.MvcApplicationPartsAssemblyInfo.cache
+C:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.dll
+C:\TodoApp\TodoApp\obj\Debug\net6.0\ref\TodoApp.dll
+C:\TodoApp\TodoApp\obj\Debug\net6.0\TodoApp.pdb
