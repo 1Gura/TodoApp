@@ -18,13 +18,9 @@ namespace TodoApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTodosAsync()
+        public  async Task<ActionResult<Todo>> GetTodosAsync()
         {
-
-                _context.Todos.Add(new Todo { Id = 1, Title = "Заголовок", Description = "Описание", Done = false });
-                _context.SaveChanges();
-            
-            return Ok(_context.Todos.ToList());
+            return Ok(await _context.Todos.ToListAsync());
         }
     }
 }

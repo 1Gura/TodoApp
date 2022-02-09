@@ -9,11 +9,8 @@ namespace TodoApp.Context
 
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
         {
+            
         }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer(@"Server=(localdb)\\mssqllocaldb;Database=tododbstore;Trusted_Connection=True;");
-        //}
     }
 }
