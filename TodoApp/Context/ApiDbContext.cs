@@ -9,7 +9,7 @@ namespace TodoApp.Context
 
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
         {
-            
+            Database.EnsureCreated();
         }
 
     }
