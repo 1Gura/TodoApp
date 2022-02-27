@@ -17,13 +17,35 @@ namespace TodoApp.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("getTodos")]
         public async Task<ActionResult<Todo>> GetTodosAsync()
         {
             return Ok(await _context.Todos.ToListAsync());
         }
 
-        [HttpPost]
+        [HttpGet("getTodoByTitle")]
+        public async Task<ActionResult<List<Todo>>> GetTodosByTitle([FromQuery] string title)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(title))
+                {
+                    return BadRequest("Была передана нулевая строка");
+                }
+                var todos = await _context.Todos.Where(todo => todo.Title.Contains(title)).ToListAsync();
+                if (!todos.Any())
+                {
+                    return BadRequest("Записей с таким загловком нет");
+                }
+                return Ok(todos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [HttpPost("createTodo")]
         public async Task<ActionResult<Todo>> CreateTodo([FromBody] Todo todo)
         {
             if (ModelState.IsValid)
