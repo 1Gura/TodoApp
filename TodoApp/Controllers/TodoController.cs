@@ -64,7 +64,7 @@ namespace TodoApp.Controllers
             };
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("getTodo/{id}")]
         public async Task<ActionResult<Todo>> GetItem(int id)
         {
             var todo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == id);
@@ -73,7 +73,7 @@ namespace TodoApp.Controllers
             return Ok(todo);
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("patchTodo/{id}")]
         public async Task<ActionResult<Todo>> UpdateTodo(int id, Todo todo)
         {
             if (id != todo.Id)
@@ -88,7 +88,7 @@ namespace TodoApp.Controllers
             return Ok(existTodo);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("deleteTodo/{id}")]
         public async Task<ActionResult<Todo>> DeleteTodo(int id)
         {
             var existTodo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == id);
