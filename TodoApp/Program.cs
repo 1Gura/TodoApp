@@ -1,13 +1,41 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using TodoApp.Configuration;
 using TodoApp.Context;
+using TodoApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
 builder.Services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(connection));
+builder.Services.AddScoped<AuthManagerService>();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(jwt =>
+{
+    var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtConfig:Secret"]);
+    jwt.SaveToken = true;
+    jwt.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        RequireExpirationTime = false
+    };
+});
 builder.Services.AddCors();
-
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApiDbContext>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -32,6 +60,9 @@ app.UseCors(builder =>
     builder.AllowAnyMethod();
     builder.AllowAnyOrigin();
 });
+
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

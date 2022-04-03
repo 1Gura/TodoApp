@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using TodoApp.Models;
 
 namespace TodoApp.Context
 {
-    public class ApiDbContext : DbContext
+    public class ApiDbContext : IdentityDbContext
     {
         public virtual DbSet<Todo> Todos { get; set; }
 
