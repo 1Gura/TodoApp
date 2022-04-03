@@ -35,7 +35,7 @@ namespace TodoApp.Controllers
                 var todos = await _context.Todos.Where(todo => todo.Title.Contains(title)).ToListAsync();
                 if (!todos.Any())
                 {
-                    return BadRequest("Записей с таким загловком нет");
+                    return BadRequest("Записей с таким заголовком нет");
                 }
                 return Ok(todos);
             }
@@ -77,10 +77,10 @@ namespace TodoApp.Controllers
         public async Task<ActionResult<Todo>> UpdateTodo(int id, Todo todo)
         {
             if (id != todo.Id)
-                return BadRequest();
+                return BadRequest("Запись которую вы пытаетесь изменить не существует");
             var existTodo = await _context.Todos.FirstOrDefaultAsync(y => y.Id == id);
             if (existTodo == null)
-                return NotFound();
+                return NotFound("Запись которую вы пытаетесь изменить не существует");
             existTodo.Title = todo.Title;
             existTodo.Description = todo.Description;
             existTodo.Done = todo.Done;
@@ -93,7 +93,7 @@ namespace TodoApp.Controllers
         {
             var existTodo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == id);
             if (existTodo == null)
-                return NotFound();
+                return NotFound("Запись которую вы пытаетесь удалить не существует");
             _context.Todos.Remove(existTodo);
             await _context.SaveChangesAsync();
             return Ok(existTodo);
