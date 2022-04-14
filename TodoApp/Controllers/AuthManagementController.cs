@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TodoApp.Configuration;
+using TodoApp.Context;
 using TodoApp.Models.Dto.Requests;
 using TodoApp.Models.Dto.Responses;
 using TodoApp.Services;
@@ -21,10 +22,14 @@ namespace TodoApp.Controllers
         private readonly AuthManagerService authManagerService;
 
 
-        public AuthManagementController(UserManager<IdentityUser> userManager, AuthManagerService authManagerService)
+        public AuthManagementController(
+            UserManager<IdentityUser> userManager,
+            AuthManagerService authManagerService
+            )
         {
             _userManager = userManager;
             this.authManagerService = authManagerService;
+
         }
 
         [HttpPost]
@@ -49,12 +54,7 @@ namespace TodoApp.Controllers
                 var isCreated = await _userManager.CreateAsync(newUser, userInfo.Password);
                 if (isCreated.Succeeded)
                 {
-                    var jwtToken = authManagerService.GenerateJwtToken(newUser);
-                    return Ok(new RegistrationResponse()
-                    {
-                        Success = true,
-                        Token = jwtToken
-                    });
+                    return Ok(await authManagerService.GenerateJwtTokenAsync(newUser));
                 }
                 else
                 {
@@ -95,14 +95,9 @@ namespace TodoApp.Controllers
                     });
                 }
                 var isCorrect = await _userManager.CheckPasswordAsync(existingUser, user.Password);
-                if(isCorrect)
+                if (isCorrect)
                 {
-                    var jwtToken = authManagerService.GenerateJwtToken(existingUser);
-                    return Ok(new RegistrationResponse()
-                    {
-                        Success = true,
-                        Token = jwtToken
-                    });
+                    return Ok(await authManagerService.GenerateJwtTokenAsync(existingUser));
                 }
                 return BadRequest(new RegistrationResponse()
                 {
