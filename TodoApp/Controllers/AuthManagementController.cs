@@ -34,27 +34,29 @@ namespace TodoApp.Controllers
 
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromBody] UserRegistrationDto userInfo)
+        public async Task<IActionResult> Register([FromBody] UserRegistrationDto user)
         {
             if (ModelState.IsValid)
             {
-                var existingUser = await _userManager.FindByEmailAsync(userInfo.Email);
+                // We can utilise the model
+                var existingUser = await _userManager.FindByEmailAsync(user.Email);
+
                 if (existingUser != null)
                 {
                     return BadRequest(new RegistrationResponse()
                     {
-                        Errors = new List<string>
-                        {
-                            "Пользователся с таким Email уже существует"
-                        },
+                        Errors = new List<string>() {
+                                "Email already in use"
+                            },
                         Success = false
                     });
                 }
-                var newUser = new IdentityUser() { UserName = userInfo.UserName, Email = userInfo.Email };
-                var isCreated = await _userManager.CreateAsync(newUser, userInfo.Password);
+                var newUser = new IdentityUser() { Email = user.Email, UserName = user.UserName };
+                var isCreated = await _userManager.CreateAsync(newUser, user.Password);
                 if (isCreated.Succeeded)
                 {
-                    return Ok(await authManagerService.GenerateJwtTokenAsync(newUser));
+                    var jwtToken = await authManagerService.GenerateJwtTokenAsync(newUser);
+                    return Ok(jwtToken);
                 }
                 else
                 {
@@ -64,14 +66,13 @@ namespace TodoApp.Controllers
                         Success = false
                     });
                 }
-
             }
+
             return BadRequest(new RegistrationResponse()
             {
-                Errors = new List<string>
-                {
-                    "Неправильный email или пароль"
-                },
+                Errors = new List<string>() {
+                        "Invalid payload"
+                    },
                 Success = false
             });
         }
@@ -113,6 +114,36 @@ namespace TodoApp.Controllers
                 Errors = new List<string>
                 {
                     "Неккоректный email или пароль"
+                },
+                Success = false
+            });
+        }
+
+        [HttpPost]
+        [Route("RefreshToken")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await authManagerService.VerifyAndGenerateToken(tokenRequest);
+                if (result == null)
+                {
+                    return BadRequest(new RegistrationResponse()
+                    {
+                        Errors = new List<string>()
+                    {
+                        "Invalid token"
+                    },
+                        Success = false
+                    });
+                }
+                return Ok(result);
+            }
+            return BadRequest(new RegistrationResponse()
+            {
+                Errors = new List<string>()
+                {
+                    "Invalid payload"
                 },
                 Success = false
             });
