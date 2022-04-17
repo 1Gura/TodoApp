@@ -18,17 +18,21 @@ namespace TodoApp.Services
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly ApiDbContext _apiDbContext;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
 
         public AuthManagerService(
             IOptionsMonitor<JwtConfig> optionsMonitor,
             TokenValidationParameters tokenValidationParameters,
             ApiDbContext apiDbContext,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager
+            )
         {
             _jwtConfig = optionsMonitor.CurrentValue;
             _tokenValidationParameters = tokenValidationParameters;
             _apiDbContext = apiDbContext;
             _userManager = userManager;
+            this.roleManager = roleManager;
         }
         public async Task<AuthResult> GenerateJwtTokenAsync(IdentityUser user)
         {
@@ -36,15 +40,11 @@ namespace TodoApp.Services
 
             var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
 
+            var claims = await GetAllValidCLaims(user);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim("Id", user.Id),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(10), // 5-10 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -73,6 +73,35 @@ namespace TodoApp.Services
                 Success = true,
                 RefreshToken = refreshToken.Token
             };
+        }
+
+        private async Task<List<Claim>> GetAllValidCLaims(IdentityUser user)
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim("Id", user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            claims.AddRange(userClaims);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var userRole in userRoles)
+            {
+                var role = await roleManager.FindByNameAsync(userRole);
+                if (role != null)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, userRole));
+                    var roleClaims = await roleManager.GetClaimsAsync(role);
+                    foreach (var roleClaim in roleClaims)
+                    {
+                        claims.Add(roleClaim);
+                    }
+                }
+            }
+            return claims;
         }
 
         private string RandomString(int length)

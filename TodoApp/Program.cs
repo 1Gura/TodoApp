@@ -13,8 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
 builder.Services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(connection));
-//builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-//            .AddEntityFrameworkStores<ApiDbContext>();
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtConfig:Secret"]);
 var tokenValidationParams = new TokenValidationParameters
@@ -38,12 +36,20 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(jwt =>
 {
-    
+
     jwt.SaveToken = true;
     jwt.TokenValidationParameters = tokenValidationParams;
 });
 builder.Services.AddCors();
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(
+        "DepartmentPolicy",
+        policy => policy.RequireClaim("department")
+        );
+});
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApiDbContext>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -69,7 +75,6 @@ app.UseCors(builder =>
     builder.AllowAnyMethod();
     builder.AllowAnyOrigin();
 });
-
 
 app.UseAuthentication();
 

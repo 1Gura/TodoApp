@@ -20,16 +20,21 @@ namespace TodoApp.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AuthManagerService authManagerService;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly ILogger<AuthManagementController> logger;
 
 
         public AuthManagementController(
             UserManager<IdentityUser> userManager,
-            AuthManagerService authManagerService
+            AuthManagerService authManagerService,
+            RoleManager<IdentityRole> roleManager,
+            ILogger<AuthManagementController> logger
             )
         {
             _userManager = userManager;
             this.authManagerService = authManagerService;
-
+            this.roleManager = roleManager;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -38,7 +43,6 @@ namespace TodoApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                // We can utilise the model
                 var existingUser = await _userManager.FindByEmailAsync(user.Email);
 
                 if (existingUser != null)
@@ -55,6 +59,7 @@ namespace TodoApp.Controllers
                 var isCreated = await _userManager.CreateAsync(newUser, user.Password);
                 if (isCreated.Succeeded)
                 {
+ 
                     var jwtToken = await authManagerService.GenerateJwtTokenAsync(newUser);
                     return Ok(jwtToken);
                 }

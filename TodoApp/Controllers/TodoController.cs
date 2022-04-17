@@ -11,7 +11,7 @@ namespace TodoApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "AppUser")]
     public class TodoController : ControllerBase
     {
         private readonly ApiDbContext _context;
@@ -49,6 +49,7 @@ namespace TodoApp.Controllers
 
         }
         [HttpPost("createTodo")]
+        [Authorize(Policy = "DepartmentPolicy")]
         public async Task<ActionResult<Todo>> CreateTodo([FromBody] Todo todo)
         {
             if (ModelState.IsValid)
