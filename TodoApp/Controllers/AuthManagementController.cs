@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -22,19 +24,21 @@ namespace TodoApp.Controllers
         private readonly AuthManagerService authManagerService;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly ILogger<AuthManagementController> logger;
-
+        private readonly ApiDbContext context;
 
         public AuthManagementController(
             UserManager<IdentityUser> userManager,
             AuthManagerService authManagerService,
             RoleManager<IdentityRole> roleManager,
-            ILogger<AuthManagementController> logger
+            ILogger<AuthManagementController> logger,
+            ApiDbContext context
             )
         {
             _userManager = userManager;
             this.authManagerService = authManagerService;
             this.roleManager = roleManager;
             this.logger = logger;
+            this.context = context;
         }
 
         [HttpPost]
@@ -50,7 +54,17 @@ namespace TodoApp.Controllers
                     return BadRequest(new RegistrationResponse()
                     {
                         Errors = new List<string>() {
-                                "Email already in use"
+                                "Пользователь с таким Email уже существует"
+                            },
+                        Success = false
+                    });
+                }
+                if (user.Password != user.RepeatPassword)
+                {
+                    return BadRequest(new RegistrationResponse()
+                    {
+                        Errors = new List<string>() {
+                               "Пароли не совпадают"
                             },
                         Success = false
                     });
@@ -59,7 +73,7 @@ namespace TodoApp.Controllers
                 var isCreated = await _userManager.CreateAsync(newUser, user.Password);
                 if (isCreated.Succeeded)
                 {
- 
+                    await _userManager.AddToRoleAsync(newUser, "AppUser");
                     var jwtToken = await authManagerService.GenerateJwtTokenAsync(newUser);
                     return Ok(jwtToken);
                 }
@@ -80,6 +94,16 @@ namespace TodoApp.Controllers
                     },
                 Success = false
             });
+        }
+
+        [HttpGet]
+        [Route("GetUserInfo")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> UserInfo([FromHeader(Name = "Authorization")] string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var decodedValue = handler.ReadJwtToken(token);
+            return Ok(decodedValue);
         }
 
         [HttpPost]
@@ -123,6 +147,8 @@ namespace TodoApp.Controllers
                 Success = false
             });
         }
+
+        
 
         [HttpPost]
         [Route("RefreshToken")]
