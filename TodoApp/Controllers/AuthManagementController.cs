@@ -41,6 +41,19 @@ namespace TodoApp.Controllers
             this.context = context;
         }
 
+        [HttpGet]
+        [Route("UniqEmail")]
+        public async Task<ActionResult<bool>> CheckEmailUniq([FromQuery] string email)
+        {
+            var existingUser = await _userManager.FindByEmailAsync(email);
+            if(null == existingUser)
+            {
+                return Ok(null);
+            }
+
+            return Ok(true);
+        }
+
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto user)
@@ -148,7 +161,7 @@ namespace TodoApp.Controllers
             });
         }
 
-        
+
 
         [HttpPost]
         [Route("RefreshToken")]
