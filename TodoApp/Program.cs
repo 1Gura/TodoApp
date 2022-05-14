@@ -28,7 +28,6 @@ var tokenValidationParams = new TokenValidationParameters
 builder.Services.AddSingleton(tokenValidationParams);
 builder.Services.AddScoped<AuthManagerService>();
 
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

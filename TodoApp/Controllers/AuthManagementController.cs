@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,8 @@ using System.Security.Claims;
 using System.Text;
 using TodoApp.Configuration;
 using TodoApp.Context;
+using TodoApp.Mapping;
+using TodoApp.Models.Dto;
 using TodoApp.Models.Dto.Requests;
 using TodoApp.Models.Dto.Responses;
 using TodoApp.Services;
@@ -25,7 +28,8 @@ namespace TodoApp.Controllers
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly ILogger<AuthManagementController> logger;
         private readonly ApiDbContext context;
-
+        
+        private IMapper mapper { get; set; } = null!;
         public AuthManagementController(
             UserManager<IdentityUser> userManager,
             AuthManagerService authManagerService,
@@ -39,6 +43,12 @@ namespace TodoApp.Controllers
             this.roleManager = roleManager;
             this.logger = logger;
             this.context = context;
+            var mapperConfig = new MapperConfiguration(x =>
+            {
+                x.AddProfile<AppMappingProfile>();
+            });
+            mapperConfig.AssertConfigurationIsValid();
+            mapper = mapperConfig.CreateMapper();
         }
 
         [HttpGet]
@@ -46,7 +56,7 @@ namespace TodoApp.Controllers
         public async Task<ActionResult<bool>> CheckEmailUniq([FromQuery] string email)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
-            if(null == existingUser)
+            if (null == existingUser)
             {
                 return Ok(null);
             }
@@ -112,11 +122,22 @@ namespace TodoApp.Controllers
         [HttpGet]
         [Route("GetUserInfo")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> UserInfo([FromHeader(Name = "Authorization")] string token)
+        public async Task<ActionResult<IdentityUser>> UserInfo(string userEmail)
         {
-            var handler = new JwtSecurityTokenHandler();
-            var decodedValue = handler.ReadJwtToken(token);
-            return Ok(decodedValue);
+            var user = this.context.Users.FirstOrDefault(x => x.Email == userEmail);
+            if(user == null)
+            {
+                return BadRequest(new RegistrationResponse()
+                {
+                    Errors = new List<string>
+                    {
+                    "Пользователся с таким Email не существует"
+                    },
+                    Success = false
+                });
+            }
+            var userShort = this.mapper.Map<UserDto>(user);
+            return Ok(userShort);
         }
 
         [HttpPost]

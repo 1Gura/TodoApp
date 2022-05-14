@@ -71,7 +71,8 @@ namespace TodoApp.Services
             {
                 Token = jwtToken,
                 Success = true,
-                RefreshToken = refreshToken.Token
+                RefreshToken = refreshToken.Token,
+                UserEmail = user.Email,
             };
         }
 
