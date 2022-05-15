@@ -4,9 +4,9 @@ using TodoApp.Models.Dto;
 
 namespace TodoApp.Mapping
 {
-    public class AppMappingProfile : Profile
+    public class MappingUser : Profile
     {
-        public AppMappingProfile()
+        public MappingUser()
         {
             CreateMap<IdentityUser, UserDto>();
                 //.ForMember(x => x.Id, o=>o.Ignore());

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using TodoApp.Mapping;
 using TodoApp.Models.Dto;
 
 namespace TodoApp.Services
@@ -8,16 +9,19 @@ namespace TodoApp.Services
     {
         private readonly IMapper _mapper;
 
-        public MappingHelper(IMapper mapper)
+        public MappingHelper()
         {
-            _mapper = mapper;
-
+            var mapperConfig = new MapperConfiguration(x =>
+            {
+                x.AddProfile<MappingUser>();
+            });
+            mapperConfig.AssertConfigurationIsValid();
+            _mapper = mapperConfig.CreateMapper();
         }
 
         public UserDto getUser(IdentityUser user)
         {
-            var t = _mapper.Map<UserDto>(user);
-            return t;
+            return _mapper.Map<UserDto>(user);
         }
     }
 }

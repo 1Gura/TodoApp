@@ -28,14 +28,14 @@ namespace TodoApp.Controllers
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly ILogger<AuthManagementController> logger;
         private readonly ApiDbContext context;
-        
-        private IMapper mapper { get; set; } = null!;
+        private MappingHelper mappingHelper { get; set; } = null!;
         public AuthManagementController(
             UserManager<IdentityUser> userManager,
             AuthManagerService authManagerService,
             RoleManager<IdentityRole> roleManager,
             ILogger<AuthManagementController> logger,
-            ApiDbContext context
+            ApiDbContext context,
+            MappingHelper mappingHelper
             )
         {
             _userManager = userManager;
@@ -45,10 +45,10 @@ namespace TodoApp.Controllers
             this.context = context;
             var mapperConfig = new MapperConfiguration(x =>
             {
-                x.AddProfile<AppMappingProfile>();
+                x.AddProfile<MappingUser>();
             });
             mapperConfig.AssertConfigurationIsValid();
-            mapper = mapperConfig.CreateMapper();
+            this.mappingHelper = mappingHelper;
         }
 
         [HttpGet]
@@ -136,7 +136,7 @@ namespace TodoApp.Controllers
                     Success = false
                 });
             }
-            var userShort = this.mapper.Map<UserDto>(user);
+            var userShort = this.mappingHelper.getUser(user);
             return Ok(userShort);
         }
 

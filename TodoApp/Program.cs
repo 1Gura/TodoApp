@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TodoApp.Configuration;
 using TodoApp.Context;
+using TodoApp.Mapping;
 using TodoApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
 builder.Services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(connection));
+builder.Services.AddAutoMapper(typeof(MappingUser));
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtConfig:Secret"]);
 var tokenValidationParams = new TokenValidationParameters
@@ -27,6 +29,7 @@ var tokenValidationParams = new TokenValidationParameters
 
 builder.Services.AddSingleton(tokenValidationParams);
 builder.Services.AddScoped<AuthManagerService>();
+builder.Services.AddSingleton<MappingHelper>();
 
 builder.Services.AddAuthentication(options =>
 {
