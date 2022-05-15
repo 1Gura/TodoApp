@@ -49,7 +49,7 @@ namespace TodoApp.Controllers
 
         }
         [HttpPost("createTodo")]
-        [Authorize(Policy = "DepartmentPolicy")]
+        //[Authorize(Policy = "DepartmentPolicy")]
         public async Task<ActionResult<Todo>> CreateTodo([FromBody] Todo todo)
         {
             if (ModelState.IsValid)

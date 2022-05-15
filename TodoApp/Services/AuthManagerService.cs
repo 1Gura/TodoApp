@@ -45,7 +45,7 @@ namespace TodoApp.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(10), // 5-10 
+                Expires = DateTime.Now.AddMinutes(10), // 5-10 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -59,8 +59,8 @@ namespace TodoApp.Services
                 IsRevorked = false,
                 UserId = user.Id,
                 User = user,
-                AddedDate = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddMonths(6),
+                AddedDate = DateTime.Now,
+                ExpiryDate = DateTime.Now.AddMonths(6),
                 Token = RandomString(35) + Guid.NewGuid()
             };
 
@@ -204,7 +204,7 @@ namespace TodoApp.Services
         }
         private DateTime UnixTimeStampToDateTime(long unixTimeStamp)
         {
-            var dateTimeVal = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            var dateTimeVal = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local);
             dateTimeVal = dateTimeVal.AddSeconds(unixTimeStamp).ToLocalTime();
             return dateTimeVal;
         }

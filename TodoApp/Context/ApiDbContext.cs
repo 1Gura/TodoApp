@@ -9,6 +9,7 @@ namespace TodoApp.Context
     {
         public virtual DbSet<Todo> Todos { get; set; }
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+        public virtual DbSet<PageNote> PageNotes { get; set; }
 
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
         {
