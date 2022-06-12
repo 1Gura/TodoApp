@@ -45,7 +45,7 @@ namespace TodoApp.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(10), // 5-10 
+                Expires = DateTime.UtcNow.AddMinutes(10), // 5-10 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -59,8 +59,8 @@ namespace TodoApp.Services
                 IsRevorked = false,
                 UserId = user.Id,
                 User = user,
-                AddedDate = DateTime.Now,
-                ExpiryDate = DateTime.Now.AddMonths(6),
+                AddedDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddMonths(6),
                 Token = RandomString(35) + Guid.NewGuid()
             };
 
@@ -129,7 +129,7 @@ namespace TodoApp.Services
 
                 var utcExpiryDate = long.Parse(tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
                 var expiryDate = UnixTimeStampToDateTime(utcExpiryDate);
-                if (expiryDate > DateTime.Now)
+                if (expiryDate > DateTime.UtcNow)
                 {
                     return new AuthResult()
                     {
