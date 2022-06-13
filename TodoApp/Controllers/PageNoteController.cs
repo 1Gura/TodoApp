@@ -18,7 +18,7 @@ namespace TodoApp.Controllers
         {
             _context = context;
         }
-        
+
         // GET: api/<PageNoteController>
         [HttpGet]
         public async Task<ActionResult<List<PageNote>>> Get()
@@ -28,16 +28,30 @@ namespace TodoApp.Controllers
 
         // GET api/<PageNoteController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<PageNote>> Get(int id)
         {
-            return "value";
+            var pageNote = await this._context.PageNotes.FirstOrDefaultAsync(x => x.Id == id);
+            if (pageNote == null)
+            {
+                return new JsonResult("Ok")
+                {
+                    StatusCode = 500,
+                    ContentType = "TestType",
+                    SerializerSettings = { },
+                    Value = "NEW VALUE"
+                };
+            }
+
+            var content = this._context.Contents.Where(x => x.PageNoteId == pageNote.Id).ToList();
+            pageNote.Content = content;
+            return Ok(pageNote);
         }
 
         // POST api/<PageNoteController>
         [HttpPost]
         public async Task<ActionResult<PageNote>> CreatePageNote([FromBody] PageNote pageNote)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 await _context.PageNotes.AddAsync(pageNote);
                 await _context.SaveChangesAsync();
