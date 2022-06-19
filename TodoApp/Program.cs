@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
 builder.Services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(connection));
-builder.Services.AddAutoMapper(typeof(MappingUser));
+builder.Services.AddAutoMapper(typeof(MappingUser), typeof(MappingPageNote));
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtConfig:Secret"]);
 var tokenValidationParams = new TokenValidationParameters

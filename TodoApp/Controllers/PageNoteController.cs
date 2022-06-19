@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoApp.Context;
+using TodoApp.Mapping;
 using TodoApp.Models;
 using TodoApp.Models.Dto.Requests;
+using TodoApp.Models.Shorts;
+using TodoApp.Services;
 
 namespace TodoApp.Controllers
 {
@@ -14,16 +18,25 @@ namespace TodoApp.Controllers
     public class PageNoteController : ControllerBase
     {
         private readonly ApiDbContext _context;
-        public PageNoteController(ApiDbContext context)
+        private MappingHelper mappingHelper { get; set; } = null;
+        public PageNoteController(ApiDbContext context, MappingHelper mappingHelper)
         {
             _context = context;
+            var mapperConfig = new MapperConfiguration(x =>
+            {
+                x.AddProfile<MappingPageNote>();
+            });
+            mapperConfig.AssertConfigurationIsValid();
+            this.mappingHelper = mappingHelper;
         }
 
         // GET: api/<PageNoteController>
         [HttpGet]
-        public async Task<ActionResult<List<PageNote>>> Get()
+        public async Task<ActionResult<List<PageNoteShort>>> Get()
         {
-            return Ok(await this._context.PageNotes.ToListAsync());
+            var pageNotes = await this._context.PageNotes.ToListAsync();
+            List<PageNoteShort> shortPageNotes = this.mappingHelper.getPageNotesShort(pageNotes);
+            return Ok(shortPageNotes);
         }
 
         // GET api/<PageNoteController>/5
