@@ -25,6 +25,8 @@ var tokenValidationParams = new TokenValidationParameters
     RequireExpirationTime = false
 };
 
+builder.Services.AddInvestApiClient((_, settings) => settings.AccessToken = "t.KAj6S-BPKLcLvRtQVnCgzBvNsJT4WLK5_mwDX56C-3DFmUTIfKr5Cmi7mfa_ncz7gEc3dtal1TvAr3raCu6GBg");
+builder.Services.AddSingleton<UsersServiceSample>();
 builder.Services.AddSingleton(tokenValidationParams);
 builder.Services.AddScoped<AuthManagerService>();
 
