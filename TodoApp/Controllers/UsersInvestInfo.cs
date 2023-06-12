@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.ObjectModel;
 using Tinkoff.InvestApi;
+using Tinkoff.InvestApi.V1;
 using TodoApp.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,10 +18,19 @@ namespace TodoApp.Controllers
             this.usersServiceSample = usersServiceSample;
         }
         // GET: api/<UsersInvestInfo>
-        [HttpGet("getInfoUsersAccounts")]
+        [HttpGet("getInfoUserAccounts")]
         public async Task<dynamic> GetInfoUserAccounts()
         {
             var accountResponse = await usersServiceSample.GetAccountsResponse();
+            Console.Write(accountResponse.Accounts);
+            return accountResponse.Accounts;
+        }
+
+        [HttpGet("getAllUserInformation")]
+        public async Task<dynamic> GetAllInfoUserAccounts()
+        {
+            var accountResponse = await usersServiceSample.GetUserInfoDescriptionAsync();
+            Console.Write(accountResponse);
             return accountResponse;
         }
 

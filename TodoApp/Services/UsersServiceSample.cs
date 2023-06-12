@@ -15,7 +15,7 @@ namespace TodoApp.Services
             _service = investApi.Users;
         }
 
-        public async Task<dynamic> GetAccountsResponse()
+        public async Task<GetAccountsResponse> GetAccountsResponse()
         {
             try
             {
@@ -29,16 +29,16 @@ namespace TodoApp.Services
             }
         }
 
-        public async Task<string> GetUserInfoDescriptionAsync(CancellationToken cancellationToken)
+        public async Task<string> GetUserInfoDescriptionAsync()
         {
-            var accountsResponse = await _service.GetAccountsAsync(cancellationToken);
-            var infoResponse = await _service.GetInfoAsync(cancellationToken);
-            var userTariffResponse = await _service.GetUserTariffAsync(cancellationToken);
+            var accountsResponse = await _service.GetAccountsAsync();
+            var infoResponse = await _service.GetInfoAsync();
+            var userTariffResponse = await _service.GetUserTariffAsync();
 
             GetMarginAttributesResponse? marginAttributesResponse = null;
             try
             {
-                marginAttributesResponse = await _service.GetMarginAttributesAsync(cancellationToken);
+                marginAttributesResponse = await _service.GetMarginAttributesAsync();
             }
             catch (Exception)
             {
