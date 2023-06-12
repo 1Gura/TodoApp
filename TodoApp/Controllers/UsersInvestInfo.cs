@@ -26,6 +26,14 @@ namespace TodoApp.Controllers
             return accountResponse.Accounts;
         }
 
+        // GET: api/<UsersInvestInfo>
+        [HttpGet("getInfoAccounts")]
+        public async Task<dynamic> GetInfoAccounts()
+        {
+            var accountResponse = await usersServiceSample.GetInfoAccounts();
+            return accountResponse;
+        }
+
         [HttpGet("getAllUserInformation")]
         public async Task<dynamic> GetAllInfoUserAccounts()
         {

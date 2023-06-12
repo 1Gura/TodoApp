@@ -29,6 +29,20 @@ namespace TodoApp.Services
             }
         }
 
+        public async Task<dynamic> GetInfoAccounts()
+        {
+            try
+            {
+                return await _service?.GetUserTariffAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return await _service?.GetInfoAsync();
+
+            }
+        }
+
         public async Task<string> GetUserInfoDescriptionAsync()
         {
             var accountsResponse = await _service.GetAccountsAsync();
